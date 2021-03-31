@@ -11,13 +11,15 @@ class Transaction (models.Model):
         return f'{self.comment} -> {str(self.value)}'
 
     def save(self, *args, **kwargs):
-        print(self.value)
+        # print(self.value)
         super().save(*args, **kwargs)
         self.wallet.calc_balance()
 
     def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
+        r = super().delete(*args, **kwargs)
+        # print('delete ', self)
         self.wallet.calc_balance()
+        return r
 
 
 class Wallet (models.Model):
@@ -25,15 +27,15 @@ class Wallet (models.Model):
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0, blank=True)
 
     def calc_balance(self):
-        print('calc balance')
+        # print('calc balance')
         # TODO переделать на запрос в базу данных
         trs = self.transactions.all()
         if trs is not None:
-            print(trs)
+            # print(trs)
             new_balance = 0
             for tr in trs:
                 new_balance += tr.value
-            print(new_balance)
+            # print(new_balance)
             self.balance = new_balance
             self.save()
 
