@@ -12,7 +12,7 @@ class TransactionSerializer (serializers.ModelSerializer):
 class WalletListSerializer (serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ('name', 'balance')
+        fields = ('id', 'name', 'balance')
         read_only_fields = ('balance',)
 
 
