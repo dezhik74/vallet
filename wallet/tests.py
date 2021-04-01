@@ -42,7 +42,7 @@ class APITestCase (TestCase):
     def test_wallets(self):
         # тест /wallets/ просто вывод всех кошельков с транзакциями
         response = self.c.get('/wallets/')
-        print(response.status_code)
+        # print(response.status_code)
         r = json.loads(response.content)
         # print(r[0])
         self.assertEqual(r[0]['transactions'][0]['value'], '100.00')
@@ -62,8 +62,10 @@ class APITestCase (TestCase):
     def test_wallet_detail(self):
         # тест /wallet/<pk> вывод транзакций, смена имени кошелька, удаление кошелька
         r = self.c.get('/wallet/1/')
-        self.assertContains(r, 'wallet 1')
         # print(r.content)
+        self.assertContains(r, 'wallet 1')
+        self.assertContains(r, 'trans 1')
+        self.assertContains(r, 'trans 2')
         self.assertContains(r, 'trans 3')
         self.c.put('/wallet/1/', {'name': 'wallet 1 test'}, format='json')
         r = self.c.get('/wallets/')
@@ -71,6 +73,29 @@ class APITestCase (TestCase):
         self.c.delete('/wallet/1/')
         r = self.c.get('/wallets/')
         self.assertNotContains(r, 'wallet 1')
+
+    def test_transaction_detail(self):
+        # тест /transaction/<pk> выввод транзакции, удаление, смена суммы, наименования
+        # чтение
+        r = self.c.get('/transaction/1/')
+        print(r.content)
+        self.assertContains(r, '100.00')
+        self.assertContains(r, 'trans 1')
+        self.assertContains(r, '"wallet":1')
+        # изменение
+        self.c.patch('/transaction/1/', {'value': '14.00', 'comment': 'trans 1 test'}, format='json')
+        r = self.c.get('/transaction/1/')
+        # print(r.content)
+        self.assertContains(r, '14.00')
+        self.assertContains(r, 'trans 1 test')
+        # удаление
+        self.c.delete('/transaction/1/')
+        r = self.c.get('/wallet/1/')
+        self.assertNotContains(r, 'trans 1 test')
+
+
+
+
 
 
 
