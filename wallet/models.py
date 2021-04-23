@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum, DecimalField, Q
 
 
 class Transaction (models.Model):
@@ -27,16 +28,9 @@ class Wallet (models.Model):
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0, blank=True)
 
     def calc_balance(self):
-        # print('calc balance')
-        # TODO переделать на запрос в базу данных
-        trs = self.transactions.all()
-        if trs is not None:
-            # print(trs)
-            new_balance = 0
-            for tr in trs:
-                new_balance += tr.value
-            # print(new_balance)
-            self.balance = new_balance
+        res = Transaction.objects.aggregate(sum=Sum('value', output_field=DecimalField(), filter=Q(wallet__pk=self.pk)))
+        if res:
+            self.balance = res['sum']
             self.save()
 
     def __str__(self):
