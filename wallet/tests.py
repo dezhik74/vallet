@@ -15,6 +15,10 @@ class ModelTestCase (TestCase):
         Transaction.objects.create(value=10.00, comment='trans 2-1', wallet=w2)
         Transaction.objects.create(value=-10.00, comment='trans 2-2', wallet=w2)
 
+    def test_str_functions(self):
+        self.assertEqual(Wallet.objects.get(name='wallet 1').__str__(), 'wallet 1 -> 600.00')
+        self.assertEqual(Transaction.objects.get(comment='trans 1').__str__(), 'trans 1 -> 100.00')
+
     def test_wallet_balance(self):
         self.assertEqual(Wallet.objects.get(name='wallet 1').balance, 600.00)
         w1 = Wallet.objects.get(name='wallet 2')
