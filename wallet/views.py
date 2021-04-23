@@ -18,13 +18,13 @@ class WalletListDetail (generics.ListAPIView):
 
 class WalletDetail (generics.RetrieveUpdateDestroyAPIView):
     # вывод одного кошелька с транзакциями, изменение имени кошелька, стирание кошелька
-    queryset = Wallet.objects.all()
+    queryset = Wallet.objects.prefetch_related('transactions')
     serializer_class = WalletDetailSerializer
 
 
 class TransactionDetail (generics.RetrieveUpdateDestroyAPIView):
     # вывод транзакции, стрирание транзакции, изменение транзакции
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.select_related('wallet')
     serializer_class = TransactionSerializer
 
 

@@ -31,7 +31,7 @@ class Wallet (models.Model):
         res = Transaction.objects.aggregate(sum=Sum('value', output_field=DecimalField(), filter=Q(wallet__pk=self.pk)))
         if res:
             self.balance = res['sum']
-            self.save()
+            self.save(update_fields=['balance'])
 
     def __str__(self):
         return f'{self.name} -> {str(self.balance)}'
